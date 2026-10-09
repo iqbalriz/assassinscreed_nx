@@ -1,0 +1,8 @@
+# Docker runs the scripts and Makefiles on Linux: they must stay LF, also on
+# Windows (core.autocrlf=true would make them CRLF and they would not run).
+* text=auto eol=lf
+*.jpg binary
+*.png binary
+*.nro binary
+*.nsp binary
+*.zip binary

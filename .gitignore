@@ -1,0 +1,21 @@
+# the Mesa build: tools/get_portlibs.ps1 (or .sh) copies it here
+/portlibs32
+/build
+/SD_CARD
+/SD_CARD.zip
+/release*
+*.zip
+*.nsp
+*.elf
+*.build
+/launcher/build
+/launcher/romfs
+/launcher/*.nro
+/launcher/*.nacp
+/launcher/*.elf
+# the game is the player's own, never part of this repository
+*.apk
+*.xapk
+*.obb
+/external
+/gameloft
