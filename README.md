@@ -20,7 +20,7 @@ An unofficial Nintendo Switch native wrapper for the 32-bit Android release of
 
 ## About
 
-`assassinscreed_nx` is a native wrapper that runs the 32-bit ARM Android build of **Assassin's Creed: Altair's Chronicles HD 1.0.3** (`com.gameloft.android.TBFV.GloftASCR.ML`) on Nintendo Switch.
+`assassinscreed_nx` is a native wrapper that runs the 32-bit ARM Android build of **Assassin's Creed: Altair's Chronicles HD 1.0.5** (`com.gameloft.android.TBFV.GloftASCR.ML`) on Nintendo Switch.
 
 It loads the game's original `libassissinscreed.so` (Gameloft's own engine) and recreates what the game's Java side did: the OpenGL ES 1 context, the activity lifecycle, touch input, the sound player, the data folders, and the answers the game asks of a phone.
 
@@ -48,7 +48,7 @@ Because the Tegra X1 CPU in the Nintendo Switch natively supports 32-bit ARM (AA
 ### For Players
 - A Nintendo Switch running **Atmosphère** custom firmware.
 - The [Sphaira](https://github.com/ITotalJustice/sphaira) homebrew menu (Important: you need to install Sphaira's forwarder, otherwise the port won't work — the system would start it as a 64-bit program instead of 32-bit).
-- A copy of **Assassin's Creed: Altair's Chronicles HD 1.0.3** for Android (`com.gameloft.android.TBFV.GloftASCR.ML`), the APK with `lib/armeabi/libassissinscreed.so` inside. The name of the APK does not matter.
+- A copy of **Assassin's Creed: Altair's Chronicles HD 1.0.5** for Android (`com.gameloft.android.TBFV.GloftASCR.ML`), the APK with `lib/armeabi/libassissinscreed.so` inside. The name of the APK does not matter.
 - The game's data folder from an Android device: `gameloft/games/assassinscreed` (the APK does not contain the levels, graphics and sounds).
 
 ---
