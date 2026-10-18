@@ -10,7 +10,7 @@ An unofficial Nintendo Switch native wrapper for the 32-bit Android release of
 **Assassin's Creed: Altair's Chronicles HD** (Gameloft).
 
 [![Nintendo Switch](https://img.shields.io/badge/Nintendo_Switch-Homebrew-E60012?style=for-the-badge&logo=nintendoswitch&logoColor=white)](#)
-[![Version](https://img.shields.io/badge/Version-0.1.0-4C8BF5?style=for-the-badge)](#)
+[![Version](https://img.shields.io/badge/Version-0.1.1-4C8BF5?style=for-the-badge)](#)
 [![Architecture](https://img.shields.io/badge/AArch32-32--bit_Native-6A1B9A?style=for-the-badge)](#)
 [![License: MIT](https://img.shields.io/badge/License-MIT-green.svg?style=for-the-badge)](LICENSE)
 
@@ -38,6 +38,7 @@ Because the Tegra X1 CPU in the Nintendo Switch natively supports 32-bit ARM (AA
 - **Hardware-Accelerated Graphics:** Uses OpenGL ES 1 (the game's fixed-function renderer) via `mesa32` (Nouveau), at the game's own 800x480 scaled to the screen.
 - **Touchscreen & Controller Support:** The game is made for touch only. Touch works as on mobile, and a controller plays it too: the sticks and buttons are turned into touches on the game's on-screen controls, and a **virtual cursor** covers the menus and minigames.
 - **Sound:** The game's music, effects and voices (Ogg Vorbis) played through the Switch's audio output.
+- **Intro movie:** `intro.mp4` plays at the start (decoded by FFmpeg, LGPL). Any button or a touch skips it, and `intro_video = false` in `config.ini` turns it off.
 - **Saves & HOME menu:** Progress is saved on the SD card; HOME and sleep pause and resume the game.
 - **Atmosphère & Sphaira Integration:** A dedicated launcher NRO registers a HOME menu forwarder icon.
 
@@ -56,7 +57,7 @@ Because the Tegra X1 CPU in the Nintendo Switch natively supports 32-bit ARM (AA
 ## Installation Guide
 
 1. Download the latest release from the [Releases](../../releases) tab:
-   - `assassinscreed_nx_0.1.0.zip`
+   - `assassinscreed_nx_0.1.1.zip`
 2. Copy the `switch/assassinscreed_nx/` folder from the ZIP to the root of your SD card, so you get:
    ```text
    sdmc:/switch/assassinscreed_nx/
@@ -119,6 +120,7 @@ The first start unpacks the game's library from the APK (a few seconds, with a p
 | Section | Option | Values |
 | :--- | :--- | :--- |
 | `[game]` | `language` | `en` `de` `fr` `it` `es` `pt` `pt-br` `zh` (written into the game's options file at start) |
+| | `intro_video` | `true` (default): play `intro.mp4` at the start. `false`: skip it |
 | | `frame_limit` | `true` (default): the game's own 20 frames a second. `false` makes the game run far too fast |
 | `[sound]` | `volume` | 0 to 100 |
 | `[graphics]` | `render_size` | `800x480` (default) or `screen` |
@@ -135,7 +137,7 @@ If something goes wrong, `debug.log` and `crash.log` are written next to `config
 
 ## Not in This Port
 
-The intro movie (`intro.mp4`), the store and purchases, ads, "more games" links, the web browser and the online features are switched off: the game's Java side answers as a phone with no account and no network.
+The store and purchases, ads, "more games" links, the web browser and the online features are switched off: the game's Java side answers as a phone with no account and no network.
 
 ---
 
@@ -163,7 +165,7 @@ The intro movie (`intro.mp4`), the store and purchases, ads, "more games" links,
    docker pull devkitpro/devkita64
    ```
 
-3. **Set up `libnx32` and `mesa32`:**
+3. **Set up `libnx32`, `mesa32` and `ffmpeg32`:**
    - Compile `libnx32` next to this folder (the build looks for `../libnx32/prefix`):
      ```bash
      git clone https://github.com/aks796/libnx32.git ../libnx32
@@ -174,6 +176,13 @@ The intro movie (`intro.mp4`), the store and purchases, ads, "more games" links,
      tools/get_portlibs.sh
      ```
      (On Windows: `tools\get_portlibs.ps1`.)
+   - Build `ffmpeg32` (the intro movie; FFmpeg 7.1.1, LGPL, downloaded and checked by its script) and copy its `lib/` and `include/` into `portlibs32/` (all three libraries: `libavformat`, `libavcodec`, `libavutil`):
+     ```bash
+     git clone https://github.com/aks796/ffmpeg32.git ../ffmpeg32
+     ../ffmpeg32/build.sh
+     cp -rf ../ffmpeg32/prefix/lib ../ffmpeg32/prefix/include portlibs32/
+     ```
+     Without it the port builds and runs, but the intro movie is skipped.
 
 4. **Compile the 32-bit program:**
    ```bash
@@ -193,6 +202,8 @@ The intro movie (`intro.mp4`), the store and purchases, ads, "more games" links,
 
 - **Gameloft & Ubisoft**: Original creators of Assassin's Creed: Altair's Chronicles. Assassin's Creed is a trademark of Ubisoft.
 - **[aks796](https://github.com/aks796)**: For the [`android32`](https://github.com/aks796/android32) runtime, [`libnx32`](https://github.com/aks796/libnx32), [`mesa32`](https://github.com/aks796/mesa32), and the [`flappybirdsfamily_nx`](https://github.com/aks796/flappybirdsfamily_nx) reference port this family of ports started from.
+- **[aks796](https://github.com/aks796)** again, for [`ffmpeg32`](https://github.com/aks796/ffmpeg32) and the movie player of [`pvz_touch_nx`](https://github.com/aks796/pvz_touch_nx) (`pvz_video.c`, MIT), which `ac_video.c` is adapted from.
+- **FFmpeg**: The MP4 demuxer and the MPEG-4 and AAC decoders that play the intro (LGPL v2.1+, linked statically; source at ffmpeg.org).
 - **Andy Nguyen (TheOfficialFloW) & fgsfds**: Dynamic `.so` loader implementations.
 - **xerpi**: For `vita2hos`, pioneer of AArch32 native execution on Switch.
 - **Switchbrew**: For `libnx` and tools.

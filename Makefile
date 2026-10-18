@@ -13,6 +13,19 @@
 #---------------------------------------------------------------------------------
 TARGET               := assassinscreed_nx
 PORT_NPDM_PROGRAM_ID := 0x010071B8D4CCC704
-PORT_NPDM_VERSION    := 0.1.0
+PORT_NPDM_VERSION    := 0.1.1
 PORT_NPDM_MAIN_STACK := 0x400000
+# The intro movie: FFmpeg's MP4 demuxer and MPEG-4 / AAC decoders, built by
+# ffmpeg32's build.sh (LGPL) and copied into portlibs32/. Without them
+# ac_video.c builds without pictures (the game skips its intro).
+DCR_VIDEO := $(if $(wildcard portlibs32/lib/libavcodec.a),1,0)
+ifeq ($(DCR_VIDEO),1)
+PORT_LIBS := -L$(CURDIR)/portlibs32/lib -lavformat -lavcodec -lavutil
+endif
 include runtime/runtime.mk
+
+# FFmpeg is built with int-sized enums (-fno-short-enums), and so is its one
+# user here, whose own interface has no enums.
+$(BUILD)/ac_video.o: $(SOURCES)/ac_video.c $(RENDERER_STAMP) | $(BUILD)
+	@echo $(notdir $<)
+	@$(CC) -MMD -MP $(CFLAGS) -fno-short-enums -DDCR_VIDEO=$(DCR_VIDEO) -c $< -o $@

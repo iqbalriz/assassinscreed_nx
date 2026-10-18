@@ -62,6 +62,14 @@ H(h_playing) { return jv_i(ac_audio_playing(a[0].i)); }
 H(h_stop_all) { ac_audio_stop_all(); return jv_none(); }
 H(h_no_voice) { return jv_i(-1); }
 
+/* GLMediaPlayer.loadMovie(name[, hide the buttons]): the intro. On Android an
+ * activity plays it over the paused game; here the frame loop does (ac_video.c). */
+H(h_movie) {
+  if (dcr_config()->intro_video)
+    ac_video_request(jni_utf(a[0].l));
+  return jv_none();
+}
+
 #define AC AC_CLS_GAME
 #define GG AC_CLS_GLGAME
 #define MP AC_CLS_MEDIA
@@ -99,6 +107,9 @@ const JMethodDef jni_method_defs[] = {
     {MP, "releaseSoundPool", "()V", h_stop_all},
     {MP, "destroySoundPool", "()V", h_stop_all},
     {MP, "playVoice", "(IIIF)I", h_no_voice},
+    {MP, "loadMovie", "(" S ")V", h_movie},
+    {MP, "loadMovie", "(" S "I)V", h_movie},
+    {MP, "loadMovieOld", "(" S ")V", h_movie},
     /* every other GLMediaPlayer call: accepted; 0 / nothing playing / a movie done */
     {MP, NULL, NULL, jni_h_zero},
     {NULL, NULL, NULL, NULL},

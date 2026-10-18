@@ -43,5 +43,6 @@
 /* ------------------------------------------------------------------ frames, input */
 #define RT_BOOST_WATCH_THREAD 1  /* boost the long (loading) frames */
 #define RT_PAD_MAX_PLAYERS    1
+#define RT_GL_BLIT            1  /* the intro movie (ac_video.c) */
 
 #endif

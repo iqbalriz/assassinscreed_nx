@@ -56,6 +56,16 @@ void ac_audio_set_paused(int id, int paused);
 void ac_audio_set_volume(int id, float volume);
 int ac_audio_playing(int id);
 
+/* ac_video.c: the intro movie (intro.mp4), played by FFmpeg while the engine is paused */
+void ac_video_request(const char *name); /* GLMediaPlayer.loadMovie, on the game's thread */
+int ac_video_pending(void);
+int ac_video_begin(void);                /* open the pending movie and start it: 1 playing */
+int ac_video_active(void);
+void ac_video_skip(void);
+void ac_video_draw(void);                /* once a frame, before the swap */
+void ac_video_end(void);
+void ac_video_mix(int16_t *out, int frames, int out_rate, float gain);
+
 int ac_quit_requested(void);     /* the game asked for AssassinsCreed.Exit() */
 int ac_language(void);           /* ReturnmCurrentLang(): 0 en, 1 de, 2 fr, 3 it, 4 es, 5 pt, 6 pt-BR, 7 zh, 8 ja, 9 ko */
 

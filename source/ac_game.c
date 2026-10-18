@@ -581,6 +581,57 @@ static void patch_language(const char *name) {
   fclose(f);
 }
 
+/* ----------------------------------------------------------- the intro movie */
+/* GLMediaPlayer.loadMovie() on Android starts an activity with a VideoView; the
+ * game's view loses the window focus (nativePause(3)) and gets it back when the
+ * movie is over (nativeResume(3)). The same here, with the movie drawn by
+ * ac_video.c on this thread: the engine does not run in between. A button or a
+ * touch skips it, so does leaving the game for the HOME menu. */
+static void play_movie(void) {
+  if (!ac_video_pending())
+    return;
+  if (g_n.ViewPause)
+    g_n.ViewPause(ENV, g_cls_view, 3);
+  for (int k = 0; k < MAX_FINGERS; k++)
+    if (g_finger[k].on) {
+      g_n.GameTouch(ENV, g_cls_game, k, 0, g_finger[k].x, g_finger[k].y);
+      g_finger[k].on = 0, g_finger[k].virt = 0;
+    }
+  memset(g_btn_slot, 0, sizeof g_btn_slot);
+  g_joy_slot = g_ptr_slot = -1;
+  if (ac_video_begin()) {
+    s32 touching = 0;
+    HidTouchScreenState st;
+    memset(&st, 0, sizeof st);
+    if (hidGetTouchScreenStates(&st, 1))
+      touching = st.count;
+    while (ac_video_active() && !ac_quit_requested() && !rt_exit_requested() && appletMainLoop()) {
+      rt_applet_poll();
+      if (!rt_focused()) {
+        ac_video_skip();
+      } else {
+        if (g_pad_ready) {
+          padUpdate(&g_pad);
+          padUpdate(&g_pad_hh);
+          if (padGetButtonsDown(&g_pad) || padGetButtonsDown(&g_pad_hh))
+            ac_video_skip();
+        }
+        memset(&st, 0, sizeof st);
+        if (hidGetTouchScreenStates(&st, 1)) {
+          if (st.count > touching)
+            ac_video_skip();
+          touching = st.count;
+        }
+      }
+      ac_video_draw();
+      b_eglSwapBuffers(g_dpy, g_surf);
+    }
+    ac_video_end();
+  }
+  if (g_n.ViewResume)
+    g_n.ViewResume(ENV, g_cls_view, 3);
+}
+
 /* ----------------------------------------------------------------- run */
 int ac_game_run(void) {
   egl_up();
@@ -649,6 +700,7 @@ int ac_game_run(void) {
       svcSleepThread(50000000ll);
       continue;
     }
+    play_movie(); /* GLMediaPlayer.loadMovie, if the last frame asked for one */
     pad_poll();
     touch_poll();
     const u64 frame_start = armGetSystemTick();

@@ -5,6 +5,7 @@
 typedef struct {
   int language;      /* [game] language: the game's own number (ac_language) */
   int frame_limit;   /* [game] frame_limit: 20 fps like the Java side */
+  int intro_video;   /* [game] intro_video: play intro.mp4 */
   int volume;        /* [sound] volume, 0..100 */
   int render_screen; /* [graphics] render_size: 0 = the game's 800x480, 1 = the screen's size */
   int touch;         /* [controls] touch_screen */

@@ -109,6 +109,7 @@ static void mix(int16_t *out, int frames, void *ud) {
   mutexUnlock(&g_lock);
   for (int i = 0; i < frames * 2; i++)
     out[i] = (int16_t)(acc[i] > 32767 ? 32767 : acc[i] < -32768 ? -32768 : acc[i]);
+  ac_video_mix(out, frames, (int)g_out_rate, g_master); /* the intro movie's sound, if it plays */
 }
 
 int ac_audio_init(void) {

@@ -14,6 +14,7 @@
 static DcrConfig g_cfg = {
     .language = 0,
     .frame_limit = 1,
+    .intro_video = 1,
     .volume = 100,
     .render_screen = 0,
     .touch = 1,
@@ -33,6 +34,10 @@ static const CfgOpt k_opts[] = {
      "Run at the game's own 20 frames a second. Off: as fast as the Switch can draw,\n"
      "# and the game runs far too fast.",
      CFG_BOOL, NULL, &g_cfg.frame_limit},
+    {"game", "intro_video", "true",
+     "Play the intro movie (intro.mp4 in your gameloft/games/assassinscreed folder).\n"
+     "# Any button or a touch skips it. Off: the game goes straight on.",
+     CFG_BOOL, NULL, &g_cfg.intro_video},
     {"sound", "volume", "100", "Sound volume, 0 to 100 (the console's volume applies too).",
      CFG_INT, NULL, &g_cfg.volume, 0, 100},
     {"graphics", "render_size", "800x480",
